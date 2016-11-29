@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="sweetalert.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="block">
+                <button class="btn btn-warning btn-sm btn-block" id="runDocsCopied">Копировать документы (в конец)</button>
+                <div style="margin: 5px 0 10px">
+                    <button class="btn btn-danger btn-sm btn-block copyone" id="runInterviewCreator">Копировать документ (рядом)</button>
+                    <button class="btn btn-default btn-sm btn-block up" id="runInterviewCreatorUp">&uarr;</button>
+                </div>
+                <button class="btn btn-primary btn-sm btn-block" id="createPresentation">Создать презентацию</button>
+                <div class="subBlock" style="display: none;">
+                    <button class="btn btn-default btn-sm btn-block" id="default">По умолчанию</button>
+                    <button class="btn btn-default btn-sm btn-block" id="cityLife">Жизнь города</button>
+                    <button class="btn btn-default btn-sm btn-block" id="analyticsInside">Аналитика (внутренняя)</button>
+                    <button class="btn btn-default btn-sm btn-block" id="analyticsOutside">Аналитика (внешняя)</button>
+                    <button class="btn btn-default btn-sm btn-block" id="agencyGallery">Агентство -> фотогалерея</button>
+                    <button class="btn btn-default btn-sm btn-block" id="agencyDigest">Агентство -> дайджест</button>
+                </div>
+            </div>
+        </div>
+        <script src="jquery.min.js"></script>
+        <script src="sweetalert.min.js"></script>
+        <script src="popup.js" type="text/javascript"></script>
+    </body>
+</html>
