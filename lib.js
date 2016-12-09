@@ -49,41 +49,25 @@ function getUrl(callback) {
     });
 }
 
-/**
- * Split a string by string
- * @param delimiter
- * @param string
- * @returns {*}
+jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+});
+
+/*
+ * RegEx Selector для jQuery
+ * @returns {Boolean}
  */
-function explode( delimiter, string ) {
-
-    var emptyArray = { 0: '' };
-
-    if ( arguments.length != 2
-        || typeof arguments[0] == 'undefined'
-        || typeof arguments[1] == 'undefined' )
-    {
-        return null;
-    }
-
-    if ( delimiter === ''
-        || delimiter === false
-        || delimiter === null )
-    {
-        return false;
-    }
-
-    if ( typeof delimiter == 'function'
-        || typeof delimiter == 'object'
-        || typeof string == 'function'
-        || typeof string == 'object' )
-    {
-        return emptyArray;
-    }
-
-    if ( delimiter === true ) {
-        delimiter = '1';
-    }
-
-    return string.toString().split ( delimiter.toString() );
-}
+$.expr[':'].regex = function (elem, index, match) {
+    var matchParams = match[3].split(','),
+        validLabels = /^(data|css):/,
+        attr = {
+            method: matchParams[0].match(validLabels) ?
+                matchParams[0].split(':')[0] : 'attr',
+            property: matchParams.shift().replace(validLabels, '')
+        },
+        regexFlags = 'ig',
+        regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g, ''), regexFlags);
+    return regex.test(jQuery(elem)[attr.method](attr.property));
+};
