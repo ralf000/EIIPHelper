@@ -2,6 +2,7 @@ function initExtension(){
     chrome.storage.local.remove('createNum');
     chrome.storage.local.remove('docDragger');
     chrome.storage.local.remove('clickedDocName');
+    chrome.storage.local.remove('url');
 }
 
 function isNumeric(n) {
@@ -27,17 +28,26 @@ function setNumCopies() {
 }
 
 function addHandlers() {
+    $('#openLink').on('click', function (e) {
+        e.preventDefault();
+        initExtension();
+        chrome.tabs.getSelected(null, function (tab) {
+            if (tab.url.indexOf('investmoscow') === -1)
+                return false;
+            chrome.storage.local.set({url: tab.url});
+            chrome.extension.sendMessage({openLink: true});
+        });
+    });
+
     $('#runDocsCopied').on('click', function (e) {
         e.preventDefault();
         initExtension();
-        chrome.storage.local.remove('createNum');
         setNumCopies();
     });
 
     $('#runInterviewCreator').on('click', function (e) {
         e.preventDefault();
         initExtension();
-        chrome.storage.local.remove('createNum');
         chrome.storage.local.set({createNum: 0});
         chrome.storage.local.set({docDragger: 'on'});
         chrome.extension.sendMessage({docsCreator: 'on'});

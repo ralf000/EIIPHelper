@@ -4,16 +4,16 @@
     "version": "1.5",
     "content_scripts": [{
             "matches": [
-                "http://investmoscow.ru/*/*",
-                "http://investmoscow.itopcase.ru/*/*"
+                "*://*.investmoscow.ru/*/*",
+                "*://*.investmoscow.itopcase.ru/*/*"
                 ],
             "js": ["jquery.min.js", "sweetalert.min.js", "lib.js", "presents-data.js"],
             "css": ["sweetalert.css"]
         }],
     "permissions": [
         "storage",
-        "http://investmoscow.ru/*/*",
-        "http://investmoscow.itopcase.ru/*/*",
+        "*://*.investmoscow.ru/*/*",
+        "*://*.investmoscow.itopcase.ru/*/*",
         "http://utilites.2hut.ru/*"
         ],
     "browser_action": {
@@ -23,6 +23,6 @@
     },
     "manifest_version": 2,
     "background": {
-        "scripts": ["jquery.min.js", "background.js", "presents-data.js"]
+        "scripts": ["jquery.min.js", "background.js", "presents-data.js", "lib.js"]
     }
 }
