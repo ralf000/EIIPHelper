@@ -70,8 +70,8 @@ function getElement(elementName) {
             return regex.test($(this).text());
         })
         .closest('li')
-        .not('.dim')
-        .last();
+        .not('.dim');
+        // .last();
 }
 
 function wait(elementName) {
