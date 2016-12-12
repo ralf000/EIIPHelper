@@ -41,7 +41,7 @@ function pathHandler() {
     pathPieces = pathPieces.slice(1, -1);
     pathPieces = pathPieces.map(function (el) {
         //превращаем каждый элемент массива в регулярное выражение и декодируем кириллицу
-        return decodeURI(el.replace(/-/g, '-|\\s'));
+        return decodeURI(el.replace(/-/g, '.?[- ].?'));
     });
 }
 
