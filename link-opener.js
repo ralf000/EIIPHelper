@@ -50,7 +50,7 @@ function checkLanguage() {
     var langsMap = ['en', 'de', 'es', 'ch', 'ae'];
     var parts = url.split('.');
     var language = parts[0].split('://');
-    if (language[1] && (language[1] in langsMap))
+    if (language[1] && in_array(language[1], langsMap))
         langName = language[1];
     else
         langName = 'ru';
@@ -64,18 +64,14 @@ function treeClick(elementName) {
 
 function getElement(elementName) {
     var regex = new RegExp(elementName, 'i');
-    var currentTree = $('ul a.sprTree div');
+    var currentTree = $('li.open:last div');
     return currentTree
         .filter(function () {
-            console.log($(this).text());
             return regex.test($(this).text());
         })
         .closest('li')
+        .not('.dim')
         .last();
-    // return currentTree
-    //     .find('div:Contains("' + elementName + '")')
-    //     .closest('li')
-    //     .first()
 }
 
 function wait(elementName) {

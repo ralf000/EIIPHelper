@@ -71,3 +71,12 @@ $.expr[':'].regex = function (elem, index, match) {
         regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g, ''), regexFlags);
     return regex.test(jQuery(elem)[attr.method](attr.property));
 };
+
+function in_array(value, array)
+{
+    for(var i = 0; i < array.length; i++)
+    {
+        if(array[i] == value) return true;
+    }
+    return false;
+}
