@@ -26,7 +26,7 @@ function chooseLanguage(fullLangName) {
         }
         treeClick(fullLangName);
         openByLink();
-    }, time);
+    }, time * 5);
 }
 
 function openByLink() {

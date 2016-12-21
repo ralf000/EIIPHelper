@@ -4,6 +4,7 @@
     "version": "1.5",
     "content_scripts": [{
             "matches": [
+                "*://*/*",
                 "*://*.investmoscow.ru/*/*",
                 "*://*.investmoscow.itopcase.ru/*/*",
                 "*://*.investmoscow.upt24.ru/*/*"

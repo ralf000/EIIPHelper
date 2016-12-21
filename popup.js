@@ -1,4 +1,4 @@
-function initExtension(){
+function initExtension() {
     chrome.storage.local.remove('createNum');
     chrome.storage.local.remove('docDragger');
     chrome.storage.local.remove('clickedDocName');
@@ -52,19 +52,19 @@ function addHandlers() {
         chrome.storage.local.set({docDragger: 'on'});
         chrome.extension.sendMessage({docsCreator: 'on'});
     });
-    
+
     $('#runInterviewCreatorUp').on('click', function (e) {
         e.preventDefault();
         chrome.storage.local.set({dragUp: 'on'});
         $('#runInterviewCreator').click();
     });
-    
+
     $('#createPresentation').on('click', function (e) {
         e.preventDefault();
         initExtension();
         $(this).next('.subBlock').slideToggle();
     });
-    
+
     $('#default').on('click', function (e) {
         e.preventDefault();
         chrome.storage.local.set({presentType: 'default'});
@@ -94,6 +94,16 @@ function addHandlers() {
         e.preventDefault();
         chrome.storage.local.set({presentType: 'agencyDigest'});
         chrome.extension.sendMessage({presentGenerator: 'on'});
+    });
+    $('.link').on('mousedown', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (e.button == 0) {
+            window.open(url, '_blank');
+        } else {
+            chrome.storage.local.set({url: url});
+            chrome.extension.sendMessage({openLink: true});
+        }
     });
 }
 
