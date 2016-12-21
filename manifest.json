@@ -5,7 +5,8 @@
     "content_scripts": [{
             "matches": [
                 "*://*.investmoscow.ru/*/*",
-                "*://*.investmoscow.itopcase.ru/*/*"
+                "*://*.investmoscow.itopcase.ru/*/*",
+                "*://*.investmoscow.upt24.ru/*/*"
                 ],
             "js": ["jquery.min.js", "sweetalert.min.js", "lib.js", "presents-data.js"],
             "css": ["sweetalert.css"]
@@ -14,6 +15,7 @@
         "storage",
         "*://*.investmoscow.ru/*/*",
         "*://*.investmoscow.itopcase.ru/*/*",
+        "*://*.investmoscow.upt24.ru/*/*",
         "http://utilites.2hut.ru/*"
         ],
     "browser_action": {

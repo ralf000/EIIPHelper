@@ -15,9 +15,9 @@ chrome.extension.onMessage.addListener(
     });
 
 function createNewTab(url) {
-    url = (url.indexOf('itopcase') === -1)
-        ? 'http://investmoscow.ru/umbraco/'
-        : 'http://investmoscow.itopcase.ru/umbraco';
+    url = (url.indexOf('upt24') === -1)
+        ? 'http://web1.investmoscow.ru/umbraco/'
+        : 'http://investmoscow.upt24.ru/umbraco';
     chrome.tabs.create({url: url}, function (tab) {
         tab = tab.id;
         chrome.tabs.executeScript(tab, {file: 'link-opener.js'});
