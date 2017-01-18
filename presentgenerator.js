@@ -1,4 +1,3 @@
-
 function inArray(value, array) {
     for (var i = 0; i < array.length; i++) {
         if (array[i] == value)
@@ -55,43 +54,36 @@ function placeholdersReplace(data, galleryNum, pdf) {
 function getPdfLink(before, first, data, pdfStr, after) {
     var output = pdf = '#';
     var flag = false;
-    chrome.storage.local.get('galleryNum', function (result) {
-        var galleryNum = result.galleryNum;
-        if (galleryNum) {
-            galleryNum++;
-        } else {
-            galleryNum = 20;
-        }
-        chrome.storage.local.set({galleryNum: galleryNum});
-        $.each($('li.loaded a.clicked').closest('ul').children('li.loaded'), function () {
-            if ($(this).find('a').attr('style').indexOf('mediaFile') !== -1) {
-                flag = true;
-                $(this).find('a')[0].click();
-                var intVal = setInterval(function () {
-                    if ($('iframe#right').contents().find('.header a span nobr:contains("Свойства")').length > 0) {
-                        clearInterval(intVal);
-                        var right = $('iframe#right').contents();
-                        right.find('.header a span nobr:contains("Свойства")')[0].click();
-                        var pdf = right.find('.propertyItemContent table tr:first td:last a').text();
-                        var ext = pdf.substr(pdf.indexOf('.') + 1);
-                        if (ext === 'pdf') {
-                            output = before + first + data + pdfStr + after;
-                            output = placeholdersReplace(output, galleryNum, pdf);
-                            show(output);
-                        }
+    //timestamp in seconds
+    var galleryNum = Date.now() / 1000;
+    $.each($('li.loaded a.clicked').closest('ul').children('li.loaded'), function () {
+        if ($(this).find('a').attr('style').indexOf('mediaFile') !== -1) {
+            flag = true;
+            $(this).find('a')[0].click();
+            var intVal = setInterval(function () {
+                if ($('iframe#right').contents().find('.header a span nobr:contains("Свойства")').length > 0) {
+                    clearInterval(intVal);
+                    var right = $('iframe#right').contents();
+                    right.find('.header a span nobr:contains("Свойства")')[0].click();
+                    var pdf = right.find('.propertyItemContent table tr:first td:last a').text();
+                    var ext = pdf.substr(pdf.indexOf('.') + 1);
+                    if (ext === 'pdf') {
+                        output = before + first + data + pdfStr + after;
+                        output = placeholdersReplace(output, galleryNum, pdf);
+                        show(output);
                     }
-                }, 500);
-            }
-        });
-
-        if (!flag) {
-            output = before + first + data + pdfStr + after;
-            output = placeholdersReplace(output, galleryNum);
-            setTimeout(function () {
-                show(output);
-            }, 300);
+                }
+            }, 500);
         }
     });
+
+    if (!flag) {
+        output = before + first + data + pdfStr + after;
+        output = placeholdersReplace(output, galleryNum);
+        setTimeout(function () {
+            show(output);
+        }, 300);
+    }
 }
 
 function getStringByPresentsType(image, num) {
