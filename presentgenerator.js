@@ -54,8 +54,8 @@ function placeholdersReplace(data, galleryNum, pdf) {
 function getPdfLink(before, first, data, pdfStr, after) {
     var output = pdf = '#';
     var flag = false;
-    //timestamp in seconds
-    var galleryNum = Date.now() / 1000;
+    //timestamp in seconds with rounding
+    var galleryNum = Math.round(Date.now() / 1000);
     $.each($('li.loaded a.clicked').closest('ul').children('li.loaded'), function () {
         if ($(this).find('a').attr('style').indexOf('mediaFile') !== -1) {
             flag = true;
