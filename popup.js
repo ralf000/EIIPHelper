@@ -9,22 +9,31 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function setNumCopies() {
+function popup(title, text, errorText, callback) {
     swal({
-        title: "Автокопир",
-        text: "Сколько копий выделенного документа сделать?",
-        type: "input",
-        inputPlaceholder: "Количество копий"
+        title: title,
+        text: text,
+        type: "input"
     }, function (inputValue) {
-        if (inputValue === false || !isNumeric(inputValue))
-            return false;
-        if (inputValue === "") {
-            swal.showInputError("Вы должны ввести количество копий");
-            return false;
-        }
-        chrome.storage.local.set({createNum: --inputValue});
-        chrome.extension.sendMessage({docsCreator: 'on'});
+        callback(inputValue);
     });
+}
+
+function copyPopup(inputValue) {
+    if (inputValue === false || !isNumeric(inputValue))
+        return false;
+    if (inputValue === "") {
+        return false;
+    }
+    chrome.storage.local.set({createNum: --inputValue});
+    chrome.extension.sendMessage({docsCreator: 'on'});
+}
+
+function searchPopup(inputValue) {
+    if (inputValue == false)
+        return false;
+    chrome.storage.local.set({searchText: inputValue});
+    chrome.extension.sendMessage({search: true});
 }
 
 function addHandlers() {
@@ -42,7 +51,7 @@ function addHandlers() {
     $('#runDocsCopied').on('click', function (e) {
         e.preventDefault();
         initExtension();
-        setNumCopies();
+        popup('Автокопир', 'Сколько копий выделенного документа сделать?', 'Вы должны ввести количество копий', copyPopup);
     });
 
     $('#runInterviewCreator').on('click', function (e) {
@@ -71,8 +80,8 @@ function addHandlers() {
         chrome.storage.local.set({presentType: $(this).attr('id')});
         chrome.extension.sendMessage({presentGenerator: 'on'});
     });
-    
-    
+
+
     $('.link').on('mousedown', function (e) {
         e.preventDefault();
         opener(this, e, function (url) {
@@ -80,19 +89,24 @@ function addHandlers() {
             chrome.extension.sendMessage({openLink: true});
         });
     });
-    
-    $('.left').on('mousedown', function (e) {
+
+    $('.left').on('click', function (e) {
         e.preventDefault();
         opener(this, e);
     });
-    
+
     $('.files').on('mousedown', function (e) {
         e.preventDefault();
         opener(this, e, function () {
             chrome.storage.local.set({url: 'files'});
             chrome.extension.sendMessage({openLink: true});
         })
-    })
+    });
+
+    $('.search').on('click', function (e) {
+        e.preventDefault();
+        popup('Поиск', 'Какую страницу нужно найти для перехода?', 'Вы должны ввести название страницы', searchPopup);
+    });
 }
 
 function opener(t, event, callback) {
