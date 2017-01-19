@@ -38,6 +38,9 @@ function pathHandler() {
     var parts = url.split('://');
     var path = parts[1];
     pathPieces = path.split('/');
+    //не продолжаем если главная страница
+    if (pathPieces.length === 1)
+        return;
     pathPieces = pathPieces.slice(1, -1);
     pathPieces = pathPieces.map(function (el) {
         //превращаем каждый элемент массива в регулярное выражение и декодируем кириллицу
@@ -45,7 +48,27 @@ function pathHandler() {
     });
 }
 
+/**
+ * Частный случай для открытия раздела с файлами
+ */
+function checkMedia() {
+    if (url !== 'files')
+        return;
+
+    var timeout = setTimeout(function () {
+        if ($('a.traymedia').length !== 0) {
+            clearTimeout(timeout);
+            $('a.traymedia')[0].click();
+            throw 'stop';
+        } else {
+            checkMedia();
+        }
+    }, time)
+}
+
 function checkLanguage() {
+    checkMedia();
+
     var langName = '';
     var langsMap = ['en', 'de', 'es', 'ch', 'ae'];
     var parts = url.split('.');
@@ -71,7 +94,7 @@ function getElement(elementName) {
         })
         .closest('li')
         .not('.dim');
-        // .last();
+    // .last();
 }
 
 function wait(elementName) {

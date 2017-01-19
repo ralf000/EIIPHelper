@@ -65,46 +65,44 @@ function addHandlers() {
         $(this).next('.subBlock').slideToggle();
     });
 
-    $('#default').on('click', function (e) {
+
+    $('.present').on('click', function (e) {
         e.preventDefault();
-        chrome.storage.local.set({presentType: 'default'});
+        chrome.storage.local.set({presentType: $(this).attr('id')});
         chrome.extension.sendMessage({presentGenerator: 'on'});
     });
-    $('#cityLife').on('click', function (e) {
-        e.preventDefault();
-        chrome.storage.local.set({presentType: 'cityLife'});
-        chrome.extension.sendMessage({presentGenerator: 'on'});
-    });
-    $('#analyticsInside').on('click', function (e) {
-        e.preventDefault();
-        chrome.storage.local.set({presentType: 'analyticsInside'});
-        chrome.extension.sendMessage({presentGenerator: 'on'});
-    });
-    $('#analyticsOutside').on('click', function (e) {
-        e.preventDefault();
-        chrome.storage.local.set({presentType: 'analyticsOutside'});
-        chrome.extension.sendMessage({presentGenerator: 'on'});
-    });
-    $('#agencyGallery').on('click', function (e) {
-        e.preventDefault();
-        chrome.storage.local.set({presentType: 'agencyGallery'});
-        chrome.extension.sendMessage({presentGenerator: 'on'});
-    });
-    $('#agencyDigest').on('click', function (e) {
-        e.preventDefault();
-        chrome.storage.local.set({presentType: 'agencyDigest'});
-        chrome.extension.sendMessage({presentGenerator: 'on'});
-    });
+    
+    
     $('.link').on('mousedown', function (e) {
         e.preventDefault();
-        var url = $(this).attr('href');
-        if (e.button == 0) {
-            window.open(url, '_blank');
-        } else {
+        opener(this, e, function (url) {
             chrome.storage.local.set({url: url});
             chrome.extension.sendMessage({openLink: true});
-        }
+        });
     });
+    
+    $('.left').on('mousedown', function (e) {
+        e.preventDefault();
+        opener(this, e);
+    });
+    
+    $('.files').on('mousedown', function (e) {
+        e.preventDefault();
+        opener(this, e, function () {
+            chrome.storage.local.set({url: 'files'});
+            chrome.extension.sendMessage({openLink: true});
+        })
+    })
+}
+
+function opener(t, event, callback) {
+    callback = callback || null;
+    var url = $(t).attr('href');
+    if (event.button == 0) {
+        window.open(url, '_blank');
+    } else {
+        callback(url);
+    }
 }
 
 $(function () {
