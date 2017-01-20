@@ -51,7 +51,7 @@ function getContentTreePage(callback) {
 }
 
 function search(html) {
-    var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText);
+    var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText, 'i');
     var url = 'https://investmoscow.ru' + html.match(regexp)[1];
     store.set('url', url);
     chrome.extension.sendMessage({openLink: true});
