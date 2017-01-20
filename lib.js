@@ -8,8 +8,8 @@ function contextMenuClick(element) {
     var RIGHT_CLICK_BUTTON_CODE = 2; // the same for FF and IE
 
     evt.initMouseEvent('contextmenu', true, true,
-            element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
-            false, false, false, RIGHT_CLICK_BUTTON_CODE, null);
+        element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+        false, false, false, RIGHT_CLICK_BUTTON_CODE, null);
 
     if (document.createEventObject) {
         // dispatch for IE
@@ -33,7 +33,7 @@ function checkClickedElement() {
 //    presentation = presentation || false;
 //    if (presentation && $('li.loaded a.clicked').parent('li').index() !== 0)
 //        return false;
-    return ($('li.loaded a.clicked') && !$('li.loaded a.clicked').parent('li').hasClass('closed') && !$('li.loaded a.clicked').parent('li').hasClass('open')) ? true : false;  
+    return ($('li.loaded a.clicked') && !$('li.loaded a.clicked').parent('li').hasClass('closed') && !$('li.loaded a.clicked').parent('li').hasClass('open')) ? true : false;
 }
 
 /**
@@ -49,8 +49,8 @@ function getUrl(callback) {
     });
 }
 
-jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
-    return function( elem ) {
+jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function (arg) {
+    return function (elem) {
         return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
     };
 });
@@ -72,11 +72,9 @@ $.expr[':'].regex = function (elem, index, match) {
     return regex.test(jQuery(elem)[attr.method](attr.property));
 };
 
-function in_array(value, array)
-{
-    for(var i = 0; i < array.length; i++)
-    {
-        if(array[i] == value) return true;
+function in_array(value, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] == value) return true;
     }
     return false;
 }

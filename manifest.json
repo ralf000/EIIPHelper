@@ -1,7 +1,7 @@
 {
     "name": "EIIPHelper",
     "description": "Автоматизатор рутинных задач в umbraco",
-    "version": "1.5",
+    "version": "2.0",
     "content_scripts": [{
             "matches": [
                 "*://*/*",
@@ -9,11 +9,12 @@
                 "*://*.investmoscow.itopcase.ru/*/*",
                 "*://*.investmoscow.upt24.ru/*/*"
                 ],
-            "js": ["jquery.min.js", "sweetalert.min.js", "lib.js", "presents-data.js"],
+            "js": ["jquery.min.js", "sweetalert.min.js", "lib.js", "presents-data.js", "Store.js"],
             "css": ["sweetalert.css"]
         }],
     "permissions": [
         "storage",
+        "*://*/*",
         "*://*.investmoscow.ru/*/*",
         "*://*.investmoscow.itopcase.ru/*/*",
         "*://*.investmoscow.upt24.ru/*/*",
@@ -26,6 +27,6 @@
     },
     "manifest_version": 2,
     "background": {
-        "scripts": ["jquery.min.js", "background.js", "presents-data.js", "lib.js"]
+        "scripts": ["jquery.min.js", "background.js", "presents-data.js", "lib.js", "Store.js"]
     }
 }
