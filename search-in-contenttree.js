@@ -1,5 +1,6 @@
 //globals
 var searchText = '';
+var cachingTime = 30;
 //Если работаем с тестом
 var cacheDateInDaysName = 'cacheDateInDays';
 var contentTreePageName = 'contentTreePage';
@@ -59,7 +60,7 @@ function hasSavedContentTree() {
 function checkCachedDate() {
     store.get(cacheDateInDaysName, function (cacheDateInDays) {
         var nowInDays = getCurrentDateInDays();
-        if (nowInDays - cacheDateInDays > 14) {
+        if (nowInDays - cacheDateInDays > cachingTime) {
             return getContentTreePage(function (html) {
                 saveContentTreePage(html);
                 search(html);
@@ -85,7 +86,7 @@ function search(html) {
     var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText, 'i');
     var result = html.match(regexp);
     if (!result || result.length !== 2){
-        sweetAlert("Ошибка", "По запросу «"+searchText+"» ничего не найдено", "error");
+        return sweetAlert("Ошибка", "По запросу «"+searchText+"» ничего не найдено", "error");
     }
     var url = host + html.match(regexp)[1];
     store.set('url', url);

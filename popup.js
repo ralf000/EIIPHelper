@@ -183,8 +183,20 @@ function opener(t, event, callback) {
     if (event.button == 0) {
         window.open(url, '_blank');
     } else {
+        withoutLinkOpenerCheck(t);
         callback(url);
     }
+}
+
+function withoutLinkOpenerCheck(t) {
+    if (!$(t).hasClass('without-link-opener'))
+        return;
+    var url = '';
+    if ($(t).attr('href').indexOf('upt24') === -1)
+        url = 'https://web1.investmoscow.ru/umbraco';
+    else
+        url = 'http://investmoscow.upt24.ru/umbraco';
+    return window.open(url, '_blank');
 }
 
 $(function () {
