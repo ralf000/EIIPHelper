@@ -1,27 +1,55 @@
 //globals
 var searchText = '';
+//Если работаем с тестом
+var cacheDateInDaysName = 'cacheDateInDays';
+var contentTreePageName = 'contentTreePage';
+var contentTreeLink = 'https://investmoscow.ru/contenttree';
+var host = 'https://investmoscow.ru';
+
+/**
+ * Если работаем с тестом
+ */
+function switchToTest() {
+    cacheDateInDaysName = 'cacheDateInDaysTest';
+    contentTreePageName = 'contentTreePageTest';
+    contentTreeLink = 'http://investmoscow.upt24.ru/contenttree';
+    host = 'http://investmoscow.upt24.ru';
+}
 
 function getCurrentDateInDays() {
-    return Date.now() / 1000 / 60 / 60 / 24;
+    return Math.round(Date.now() / 1000 / 60 / 60 / 24);
 }
 
 function getAndSearch(result) {
     searchText = result;
-    hasSavedContentTree();
+    store.delete('searchText');
+
+    store.get('test',
+        function () {
+            //если нужно открыть ссылку теста
+            store.delete('test');
+            switchToTest();
+            hasSavedContentTree();
+        }, function () {
+            //если нужно открыть ссылку прома
+            hasSavedContentTree();
+        });
 }
 
 function saveContentTreePage(html) {
-    store.set('contentTreePage', html);
-    store.set('cacheDateInDays', getCurrentDateInDays());
+    store.set(contentTreePageName, html);
+    store.set(cacheDateInDaysName, getCurrentDateInDays());
 }
 
 function hasSavedContentTree() {
-    store.get('cacheDateInDays',
+    store.get(cacheDateInDaysName,
         function () {
             checkCachedDate();
         },
         function () {
+            topLayer.addTopLayerOnPage();
             getContentTreePage(function (html) {
+                topLayer.deleteTopLayer();
                 saveContentTreePage(html);
                 search(html);
             });
@@ -29,7 +57,7 @@ function hasSavedContentTree() {
 }
 
 function checkCachedDate() {
-    store.get('cacheDateInDays', function (cacheDateInDays) {
+    store.get(cacheDateInDaysName, function (cacheDateInDays) {
         var nowInDays = getCurrentDateInDays();
         if (nowInDays - cacheDateInDays > 14) {
             return getContentTreePage(function (html) {
@@ -37,7 +65,7 @@ function checkCachedDate() {
                 search(html);
             });
         } else {
-            store.get('contentTreePage', search);
+            store.get(contentTreePageName, search);
         }
     });
 }
@@ -45,17 +73,21 @@ function checkCachedDate() {
 
 function getContentTreePage(callback) {
     $.ajax({
-        url: "https://investmoscow.ru/contenttree",
-        context: document.body
-    }).success(callback);
+        url: contentTreeLink,
+        // context: document.body
+    }).success(callback)
+        .error(function () {
+            topLayer.deleteTopLayer();
+        });
 }
 
 function search(html) {
     var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText, 'i');
-    var url = 'https://investmoscow.ru' + html.match(regexp)[1];
+    var url = host + html.match(regexp)[1];
     store.set('url', url);
     chrome.extension.sendMessage({openLink: true});
 }
 
 //run
+// store.deleteAll(); throw 1;
 store.get('searchText', getAndSearch);

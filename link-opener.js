@@ -1,6 +1,6 @@
 //init global variables
 var url = '';
-var time = 400;
+var time = 500;
 var pathPieces = [];
 var cnt = 0;
 
@@ -26,7 +26,7 @@ function chooseLanguage(fullLangName) {
         }
         treeClick(fullLangName);
         openByLink();
-    }, time * 3);
+    }, time * 2);
 }
 
 function openByLink() {

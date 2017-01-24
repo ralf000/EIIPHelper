@@ -9,17 +9,53 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function popup(title, text, errorText, callback) {
+function popupCopy(callback) {
     swal({
-        title: title,
-        text: text,
+        title: 'Автокопир',
+        text: 'Сколько копий выделенного документа сделать?',
+        errorText: 'Вы должны ввести количество копий',
         type: "input"
     }, function (inputValue) {
         callback(inputValue);
     });
 }
 
-function copyPopup(inputValue) {
+function getInputText(t) {
+    return $(t).closest('body').find('input[type=text]').val();
+}
+
+
+function popupSearch(callback) {
+    swal({
+        title: 'Поиск',
+        text: 'Какую страницу нужно найти для перехода?',
+        errorText: 'Вы должны ввести название страницы',
+        type: "input",
+        buttons: [
+            {
+                text: 'Пром',
+                className: 'btn btn-primary pull-left',
+                click: function () {
+                    var inputValue = getInputText(this);
+                    search(inputValue);
+                },
+                close: true
+            },
+            {
+                text: 'Тест',
+                className: 'btn btn-default pull-right',
+                click: function () {
+                    chrome.storage.local.set({test: true});
+                    var inputValue = getInputText(this);
+                    search(inputValue);
+                },
+                close: true
+            }
+        ]
+    });
+}
+
+function copy(inputValue) {
     if (inputValue === false || !isNumeric(inputValue))
         return false;
     if (inputValue === "") {
@@ -29,11 +65,13 @@ function copyPopup(inputValue) {
     chrome.extension.sendMessage({docsCreator: 'on'});
 }
 
-function searchPopup(inputValue) {
-    if (inputValue == false)
-        return false;
+function search(inputValue) {
     chrome.storage.local.set({searchText: inputValue});
-    chrome.extension.sendMessage({search: true});
+
+    if (inputValue) {
+        chrome.extension.sendMessage({search: true});
+    }
+
 }
 
 function addHandlers() {
@@ -51,7 +89,7 @@ function addHandlers() {
     $('#runDocsCopied').on('click', function (e) {
         e.preventDefault();
         initExtension();
-        popup('Автокопир', 'Сколько копий выделенного документа сделать?', 'Вы должны ввести количество копий', copyPopup);
+        popupCopy(copy);
     });
 
     $('#runInterviewCreator').on('click', function (e) {
@@ -103,10 +141,40 @@ function addHandlers() {
         })
     });
 
-    $('.search').on('click', function (e) {
+    $('#search').on('click', function (e) {
         e.preventDefault();
-        popup('Поиск', 'Какую страницу нужно найти для перехода?', 'Вы должны ввести название страницы', searchPopup);
+        popupSearch(search);
     });
+    $('#search-update').on('click', function (e) {
+        e.preventDefault();
+        saveContentTreePages(this);
+    });
+}
+
+function saveContentTreePages(t) {
+    $(t).text('Обновляю').addClass('blink');
+    sendAjax('https://investmoscow.ru/contenttree', function (html) {
+        store.set('contentTreePage', html);
+        store.set('cacheDateInDays', getCurrentDateInDays());
+    });
+    sendAjax('http://investmoscow.upt24.ru/contenttree', function (html) {
+        $(t).text('Готово').removeClass('blink');
+        store.set('contentTreePageTest', html);
+        store.set('cacheDateInDaysTest', getCurrentDateInDays());
+    });
+}
+
+function getCurrentDateInDays() {
+    return Math.round(Date.now() / 1000 / 60 / 60 / 24);
+}
+
+function sendAjax(url, callback) {
+    $.ajax({
+        url: url
+    }).success(callback)
+        .error(function () {
+            alert('Ошибка сохранения ContentTree');
+        });
 }
 
 function opener(t, event, callback) {

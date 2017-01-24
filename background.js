@@ -15,7 +15,6 @@ chrome.extension.onMessage.addListener(
         if (request.search) {
             chrome.tabs.executeScript(null, {file: 'search-in-contenttree.js'});
         }
-
     });
 
 function createNewTab(url) {

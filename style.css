@@ -37,3 +37,11 @@ button.copyone{
     font-size: 8px;
     padding: 3px;
 }
+
+.blink {
+    animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+    50% { opacity: 0.2; }
+}
