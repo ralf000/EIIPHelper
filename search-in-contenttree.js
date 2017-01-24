@@ -83,11 +83,14 @@ function getContentTreePage(callback) {
 
 function search(html) {
     var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText, 'i');
+    var result = html.match(regexp);
+    if (!result || result.length !== 2){
+        sweetAlert("Ошибка", "По запросу «"+searchText+"» ничего не найдено", "error");
+    }
     var url = host + html.match(regexp)[1];
     store.set('url', url);
     chrome.extension.sendMessage({openLink: true});
 }
 
 //run
-// store.deleteAll(); throw 1;
 store.get('searchText', getAndSearch);
