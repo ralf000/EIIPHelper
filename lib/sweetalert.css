@@ -832,6 +832,11 @@ body.stop-scrolling {
   height: 30px;
   margin: 12px; }
 
+.present p {
+  text-align: left !important;
+  font-size: 8px !important;
+}
+
 /*
  * Animation
  */

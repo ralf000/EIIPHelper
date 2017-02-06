@@ -41,7 +41,8 @@ function show(data) {
         title: "",
         text: data,
         html: false,
-        customClass: 'present'
+        customClass: 'present',
+        allowOutsideClick: true
     });
 }
 

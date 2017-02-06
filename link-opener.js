@@ -53,13 +53,13 @@ function pathHandler() {
  */
 function checkMedia() {
     if (url !== 'files')
-        return;
+        return false;
 
     var timeout = setTimeout(function () {
         if ($('a.traymedia').length !== 0) {
             clearTimeout(timeout);
             $('a.traymedia')[0].click();
-            throw 'stop';
+            return true;
         } else {
             checkMedia();
         }
@@ -67,7 +67,8 @@ function checkMedia() {
 }
 
 function checkLanguage() {
-    checkMedia();
+    if (checkMedia())
+        return;
 
     var langName = '';
     var langsMap = ['en', 'de', 'es', 'ch', 'ae'];
