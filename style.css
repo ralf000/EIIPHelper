@@ -1,9 +1,9 @@
 
-
-.container{
+.container {
     width: 300px;
     min-height: 400px;
 }
+
 .block {
     border: 1px solid #D6D6D6;
     padding: 5px;
@@ -12,28 +12,31 @@
     margin: 10px 0;
 }
 
-.subBlock{
+.subBlock {
     margin-top: 5px;
     padding: 5px;
     border: 1px solid #e1e1e1;
     border-radius: 3px;
 }
 
-button.up{
-    width: 10%; 
+button.up {
+    width: 10%;
     float: left;
     position: relative;
     bottom: 5px;
 }
 
-button.copyone{
-    width: 90%; 
+button.copyone {
+    width: 90%;
     float: left
 }
 
-.title{font-size: 14px; margin-bottom: 5px; }
+.title {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
 
-.block.languages a{
+.block.languages a {
     font-size: 8px;
     padding: 3px;
 }
@@ -43,5 +46,12 @@ button.copyone{
 }
 
 @keyframes blinker {
-    50% { opacity: 0.2; }
+    50% {
+        opacity: 0.2;
+    }
 }
+
+.present p {
+      text-align: left !important;
+      font-size: 8px !important;
+  }

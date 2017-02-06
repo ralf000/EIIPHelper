@@ -19,7 +19,8 @@
         "lib/TopLayer.js"
       ],
       "css": [
-        "lib/sweetalert.css"
+        "lib/sweetalert.css",
+        "style.css"
       ]
     }
   ],

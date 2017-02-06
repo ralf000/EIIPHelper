@@ -22,7 +22,7 @@ function getCurrentDateInDays() {
 }
 
 function getAndSearch(result) {
-    searchText = result;
+    searchText = result.trim();
     store.delete('searchText');
 
     store.get('test',
@@ -83,12 +83,12 @@ function getContentTreePage(callback) {
 }
 
 function search(html) {
-    var regexp = new RegExp('<a.*?href="(.*?)".*?>' + searchText, 'i');
+    var regexp = new RegExp('<a.*?href="(.*?)".*?>.*?' + searchText + '.*?</a>', 'i');
     var result = html.match(regexp);
     if (!result || result.length !== 2){
         return sweetAlert("Ошибка", "По запросу «"+searchText+"» ничего не найдено", "error");
     }
-    var url = host + html.match(regexp)[1];
+    var url = host + result[1];
     store.set('url', url);
     chrome.extension.sendMessage({openLink: true});
 }
