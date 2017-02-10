@@ -1,3 +1,10 @@
+//global vars
+var parentName = '';
+var currentLanguage = '';
+var copyArea;
+var path = [];
+var waitTime = 500;
+
 function stopCopied() {
     chrome.storage.local.remove('createNum');
     chrome.extension.sendMessage({docCreateAgain: "off"});
@@ -18,10 +25,10 @@ function docsCreateCounter() {
     });
 }
 
-function chooseTargetCatalog(waitTime) {
-    var intval = setInterval(function () {
+function chooseTargetCatalog() {
+    var timeout = setTimeout(function () {
         if ($('.umbModalBox iframe').contents().find('li.loaded a.clicked').length > 0) {
-            clearInterval(intval);
+            clearTimeout(timeout);
             $('.umbModalBox iframe').contents().find('li.loaded a.clicked')[0].click();
             $('.umbModalBox iframe').contents().find('.guiInputButton')[0].click();
             var intval2 = setInterval(function () {
@@ -31,29 +38,80 @@ function chooseTargetCatalog(waitTime) {
                     docsCreateCounter();
                 }
             }, waitTime);
+        }else{
+            chooseTargetCatalog();
+        }
+    }, waitTime * 2);
+}
+
+function initDocDragger() {
+    store.get('docDragger', function (value) {
+        chrome.extension.sendMessage({docDragger: "on"});
+        chrome.storage.local.remove('docDragger');
+    }, function () {
+        $('.menuLabel:contains("Обновить узлы")').click();
+    });
+}
+
+function getCopyArea() {
+    return $('[ng-hide="searchInfo.showSearch"]')
+        .find('a:Contains("' + currentLanguage + '")').closest('li');
+}
+
+function checkOkButton() {
+    var timeout = setTimeout(function () {
+        if ($('button[ng-click="nav.hideDialog()"]').length !== 0){
+            clearTimeout(timeout);
+            $('button[ng-click="nav.hideDialog()"]').click();
+        }else{
+            checkOkButton();
         }
     }, waitTime);
 }
 
-function initDocDragger() {
-    chrome.storage.local.get('docDragger', function (result) {
-        var docDragger = result.docDragger;
-        if (docDragger === 'on') {
-            chrome.extension.sendMessage({docDragger: "on"});
-            chrome.storage.local.remove('docDragger');
-        }else{
-            $('.menuLabel:contains("Обновить узлы")').click();
-        }
+function openCopyTree() {
+    $.each(path, function (id, el) {
+        setTimeout(function () {
+            // console.log(id !== path.length);
+            if (id !== path.length) {
+                copyArea.find('a:Contains("' + el + '")').prev('i').prev('ins').click();
+            }else {
+                copyArea.find('a:Contains("' + el + '")')[0].click();
+                // $('button[ng-click="copy()"]').click();
+                // checkOkButton();
+            }
+        }, waitTime * ++id);
     });
 }
 
-if (checkClickedElement()) {
-    var clickedDocName = $('li.loaded a.clicked').text();
-    chrome.storage.local.set({clickedDocName: clickedDocName});
-    contextMenuClick($('li.loaded a.clicked')[0]);
-    $('.menuLabel:contains(Копировать)').click();
-    chooseTargetCatalog(1000);
-} else {
-    getErrorMessage('Ошибка', 'Не выбран документ для копирования.\nВыберите документ для копирования (кликните на нём)');
-    stopCopied();
+function setPathToDir() {
+    $.each($('ins.icon-navigation-down'), function (id, el) {
+        path[id] = $(el).next('i').next('a').text();
+    });
 }
+
+function run() {
+    var element = $('li.current ins').next('i').next('a');
+    parentName = $('li.current')
+        .closest('li.has-children')
+        .children('div')
+        .children('ins')
+        .next('i')
+        .next('a')
+        .text();
+    currentLanguage = $('li.current').closest('li[tree=this]').find('a').first().text();
+    var clickedDocName = element.text();
+    store.set('clickedDocName', clickedDocName);
+    setPathToDir();
+    contextMenuClick(element[0]);
+    setTimeout(function () {
+        $('span.menu-label:contains(Копировать)').closest('a')[0].click();
+        setTimeout(function () {
+            copyArea = getCopyArea();
+            openCopyTree();
+        }, waitTime * 2);
+        // chooseTargetCatalog(1000);
+    }, waitTime * 2);
+}
+
+run();
