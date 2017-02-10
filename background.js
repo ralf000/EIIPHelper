@@ -10,7 +10,7 @@ chrome.extension.onMessage.addListener(
             chrome.tabs.executeScript(null, {file: 'presentgenerator.js'});
         }
         if (request.openLink) {
-            getUrl(createNewTab);
+            store.get('url', createNewTab);
         }
         if (request.search) {
             chrome.tabs.executeScript(null, {file: 'search-in-contenttree.js'});

@@ -20,7 +20,7 @@ function languageMapInit(langName) {
 
 function chooseLanguage(fullLangName) {
     setTimeout(function () {
-        if ($('ul a.sprTree').find('div:Contains("' + fullLangName + '")').length === 0) {
+        if ($('ul.umb-tree > li > ul').find('a:Contains("' + fullLangName + '")').length === 0) {
             treeClick('Содержимое');
             checkLanguage(fullLangName);
         }
@@ -88,14 +88,19 @@ function treeClick(elementName) {
 
 function getElement(elementName) {
     var regex = new RegExp(elementName, 'i');
-    var currentTree = $('li.open:last div');
+    var currentTree = $('ins.icon-navigation-down:last').closest('li').find('a').not('.umb-options');
+    if (currentTree.length === 0){
+        return $('ul.umb-tree > li > ul')
+            .find('a:Contains("' + elementName + '")')
+            .prev()
+            .prev();
+    }
     return currentTree
         .filter(function () {
             return regex.test($(this).text());
         })
-        .closest('li')
-        .not('.dim');
-    // .last();
+        .prev()
+        .prev();
 }
 
 function wait(elementName) {
@@ -116,7 +121,9 @@ function next(elementName, element) {
     if (pathPieces[cnt])
         openByLink();
     else {
-        element.find('a')[0].click();
+        setTimeout(function () {
+            element.next().next()[0].click();
+        }, 500);
     }
 }
 
