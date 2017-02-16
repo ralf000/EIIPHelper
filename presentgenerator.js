@@ -1,23 +1,24 @@
-function inArray(value, array) {
-    for (var i = 0; i < array.length; i++) {
-        if (array[i] == value)
-            return true;
-    }
-    return false;
-}
+//globals
+var domain = 'https://investmoscow.ru';
+var numPictures = 0;
+var firstPicture = '';
+var present = {};
+var galleryNum = Math.round(Date.now() / 1000);
+var wait = 300;
 
-function sendAjax(data, before, firstStr, pdfStr, after) {
+function sendAjax() {
     var url = 'http://utilites.2hut.ru/presentGenerator/generator.php';
+    var data = {string: present.secondStr, cnt: numPictures};
     $.post(url, data, function (data, status, jqXHR) {
         if (status === 'success') {
-            getPdfLink(before, firstStr, JSON.parse(data), pdfStr, after);
+            getPdfLink(JSON.parse(data));
         }
     });
 }
 
-function setTitleAndSendAjax(before, data, firstStr, pdfStr, after) {
-    if ((before + pdfStr + after).indexOf('{title}') === -1) {
-        sendAjax(data, before, firstStr, pdfStr, after);
+function setTitleAndSendAjax() {
+    if ((present.before + present.pdfStr + present.after).indexOf('{title}') === -1) {
+        sendAjax();
         return;
     }
     swal({
@@ -29,10 +30,13 @@ function setTitleAndSendAjax(before, data, firstStr, pdfStr, after) {
         if (inputValue === false)
             return false;
         if (inputValue === "") {
-            swal.showInputError("Вы должны ввести количество копий");
+            swal.showInputError("Вы должны ввести заголовок презентации");
             return false;
         }
-        sendAjax(data, before.replace(/\{title\}/, inputValue), firstStr, pdfStr.replace(/\{title\}/, inputValue), after.replace(/\{title\}/, inputValue));
+        present.before = present.before.replace(/\{title\}/, inputValue);
+        present.pdfStr = present.pdfStr.replace(/\{title\}/, inputValue);
+        present.after = present.after.replace(/\{title\}/, inputValue);
+        sendAjax();
     });
 }
 
@@ -46,95 +50,113 @@ function show(data) {
     });
 }
 
-function placeholdersReplace(data, galleryNum, pdf) {
+function placeholdersReplace(data, pdf) {
     pdf = pdf || '';
     data = data.replace(/\{galleryNum\}/g, galleryNum).replace(/\{pdf\}/g, pdf);
     return data;
 }
 
-function getPdfLink(before, first, data, pdfStr, after) {
+function getPdfLink(data) {
     var output = pdf = '#';
     var flag = false;
-    //timestamp in seconds with rounding
-    var galleryNum = Math.round(Date.now() / 1000);
-    $.each($('li.loaded a.clicked').closest('ul').children('li.loaded'), function () {
-        if ($(this).find('a').attr('style').indexOf('mediaFile') !== -1) {
-            flag = true;
-            $(this).find('a')[0].click();
-            var intVal = setInterval(function () {
-                if ($('iframe#right').contents().find('.header a span nobr:contains("Свойства")').length > 0) {
-                    clearInterval(intVal);
-                    var right = $('iframe#right').contents();
-                    right.find('.header a span nobr:contains("Свойства")')[0].click();
-                    var pdf = right.find('.propertyItemContent table tr:first td:last a').text();
-                    var ext = pdf.substr(pdf.indexOf('.') + 1);
-                    if (ext === 'pdf') {
-                        output = before + first + data + pdfStr + after;
-                        output = placeholdersReplace(output, galleryNum, pdf);
-                        show(output);
-                    }
-                }
-            }, 500);
-        }
-    });
-
-    if (!flag) {
-        output = before + first + data + pdfStr + after;
+    if ($('.umb-table-body').first().find('.umb-table-row.ng-scope i.icon-files').length === 0) {
+        output = present.before + present.first + data + present.pdfStr + present.after;
         output = placeholdersReplace(output, galleryNum);
         setTimeout(function () {
             show(output);
-        }, 300);
+        }, wait);
+    } else {
+        $('.umb-table-body')
+            .first()
+            .find('.umb-table-row.ng-scope i.icon-files')
+            .last()
+            .parent('.umb-table-cell')
+            .next('.umb-table-cell.umb-table__name')
+            .children('a')
+            .click();
+        waitPdf();
     }
 }
 
-function getStringByPresentsType(image, num) {
-    chrome.storage.local.get('presentType', function (result) {
-        var presentType = result.presentType;
-        if (presentType) {
-            var before = presentsData[presentType].before;
-            var firstStr = presentsData[presentType].first.replace(/{\link\}/g, image);
-            var secondStr = presentsData[presentType].other.replace(/{\link\}/g, image);
-            var pdfStr = presentsData[presentType].pdf;
-            var after = presentsData[presentType].after.replace(/{\link\}/g, image);
-            setTitleAndSendAjax(before, {string: secondStr, cnt: num}, firstStr, pdfStr, after);
-        }
-    });
+function getStringByPresentsType(presentType) {
+    present.before = presentsData[presentType].before;
+    present.firstStr = presentsData[presentType].first.replace(/{\link\}/g, firstPicture);
+    present.secondStr = presentsData[presentType].other.replace(/{\link\}/g, firstPicture);
+    present.pdfStr = presentsData[presentType].pdf;
+    present.after = presentsData[presentType].after.replace(/{\link\}/g, firstPicture);
+    setTitleAndSendAjax();
 }
 
-function handSlides(num) {
-    var avaliableExtensions = ['jpg', 'png', 'gif'];
-//    var current = $('li.loaded a.clicked');
-    var pos = $('li.loaded a.clicked').parent('li').index();
-    var count = num - pos;
-    $('li.loaded a.clicked').click();
-    var intVal = setInterval(function () {
-        if ($('iframe#right').contents().find('.header a span nobr:contains("Свойства")').length > 0) {
-            clearInterval(intVal);
-            var right = $('iframe#right').contents();
-            right.find('.header a span nobr:contains("Свойства")')[0].click();
-            var image = right.find('.propertyItemContent table tr:first td:last a').text();
-            var ext = image.substr(image.indexOf('.') + 1);
-            if (inArray(ext, avaliableExtensions)) {
-                getStringByPresentsType(image, count);
+
+/*function getStringByPresentsType(presentType) {
+ chrome.storage.local.get('presentType', function (result) {
+ var presentType = result.presentType;
+ if (presentType) {
+ var before = presentsData[presentType].before;
+ var firstStr = presentsData[presentType].first.replace(/{\link\}/g, firstPicture);
+ var secondStr = presentsData[presentType].other.replace(/{\link\}/g, firstPicture);
+ var pdfStr = presentsData[presentType].pdf;
+ var after = presentsData[presentType].after.replace(/{\link\}/g, firstPicture);
+ setTitleAndSendAjax(before, {string: secondStr, cnt: numPictures}, firstStr, pdfStr, after);
+ }
+ });
+ }*/
+
+function handSlides() {
+    store.get('presentType', getStringByPresentsType);
+}
+
+function waitPdf() {
+    var timeout = setTimeout(function () {
+        if ($('ul.thumbnails a').length !== 0) {
+            clearTimeout(timeout);
+            var pdf = domain + $('ul.thumbnails a').attr('href');
+            var ext = pdf.substr(pdf.indexOf('.') + 1);
+            if (ext === 'pdf') {
+                var output = present.before + present.first + data + present.pdfStr + present.after;
+                output = placeholdersReplace(output, pdf);
+                show(output);
             }
+        } else {
+            waitPdf();
         }
-    }, 500);
+    }, wait)
 }
 
-function getNumElements() {
-    var cnt = 0;
-    $.each($('li.loaded a.clicked').closest('ul').children('li.loaded'), function () {
-        if ($(this).find('a').attr('style').indexOf('mediaPhoto') !== -1)
-            cnt++;
-    });
-    return cnt;
+function waitPicture() {
+    var timeout = setTimeout(function () {
+        if ($('ul.thumbnails a').length !== 0) {
+            clearTimeout(timeout);
+            firstPicture = domain + $('ul.thumbnails a').attr('href');
+            handSlides();
+        } else {
+            waitPicture();
+        }
+    }, wait)
+}
+
+function waitPictures() {
+    setTimeout(function () {
+        var lastPicture =
+            $('.umb-table-body')
+                .first()
+                .find('.umb-table-row.ng-scope i.icon-picture')
+                .last()
+                .parent('.umb-table-cell');
+        numPictures = lastPicture.next().next().children('span').text();
+        numPictures = Number(numPictures) + 1;
+        lastPicture.next('.umb-table-cell.umb-table__name').children('a')[0].click();
+        waitPicture();
+    }, wait * 10)
+}
+
+function getLastPage() {
+    $('.pagination').first().find('li[ng-repeat="pgn in pagination"]').last().find('a')[0].click();
+    waitPictures();
 }
 
 function getPresentation() {
-    if (!checkClickedElement())
-        getErrorMessage('Ошибка', 'Для создания презентации выберите первое изображение в папке');
-    var numElements = getNumElements();
-    handSlides(numElements);
+    getLastPage();
 }
 
 getPresentation();
