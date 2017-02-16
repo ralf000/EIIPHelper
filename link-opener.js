@@ -26,7 +26,7 @@ function chooseLanguage(fullLangName) {
         }
         treeClick(fullLangName);
         openByLink();
-    }, time * 2);
+    }, time);
 }
 
 function openByLink() {
@@ -89,7 +89,7 @@ function treeClick(elementName) {
 function getElement(elementName) {
     var regex = new RegExp(elementName, 'i');
     var currentTree = $('ins.icon-navigation-down:last').closest('li').find('a').not('.umb-options');
-    if (currentTree.length === 0){
+    if (currentTree.length === 0) {
         return $('ul.umb-tree > li > ul')
             .find('a:Contains("' + elementName + '")')
             .prev()
@@ -112,7 +112,7 @@ function wait(elementName) {
         } else {
             wait(elementName);
         }
-    }, time);
+    }, time * 1.3);
 }
 
 function next(elementName, element) {
@@ -123,7 +123,7 @@ function next(elementName, element) {
     else {
         setTimeout(function () {
             element.next().next()[0].click();
-        }, 500);
+        }, time);
     }
 }
 
@@ -140,4 +140,15 @@ function getUrl(callback) {
     });
 }
 
-getUrl(checkLanguage);
+function checkAuth() {
+    var timeout = setTimeout(function () {
+        if ($('form[name=loginForm]').length === 0) {
+            clearTimeout(timeout);
+            checkLanguage();
+        } else {
+            checkAuth();
+        }
+    }, time * 2)
+}
+
+getUrl(checkAuth);
