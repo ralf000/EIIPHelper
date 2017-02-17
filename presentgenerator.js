@@ -160,7 +160,8 @@ function waitPictures() {
 }
 
 function getLastPage() {
-    $('.pagination').first().find('li[ng-repeat="pgn in pagination"]').last().find('a')[0].click();
+    if ($('.pagination').length === 2)
+        $('.pagination').first().find('li[ng-repeat="pgn in pagination"]').last().find('a')[0].click();
     waitPictures();
 }
 
