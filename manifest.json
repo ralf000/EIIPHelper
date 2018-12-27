@@ -16,7 +16,8 @@
         "lib/lib.js",
         "lib/presents-data.js",
         "lib/Store.js",
-        "lib/TopLayer.js"
+        "lib/TopLayer.js",
+        "link-opener.js"
       ],
       "css": [
         "lib/sweetalert.css"
@@ -24,6 +25,7 @@
     }
   ],
   "permissions": [
+    "activeTab",
     "storage",
     "*://*/*",
     "*://*.investmoscow.ru/*/*",
@@ -44,7 +46,8 @@
       "lib/presents-data.js",
       "lib/lib.js",
       "lib/Store.js",
-      "lib/TopLayer.js"
+      "lib/TopLayer.js",
+      "link-opener.js"
     ]
   }
 }
